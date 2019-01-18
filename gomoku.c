@@ -91,30 +91,6 @@ int hantei(int ban[MASU][MASU],int row,int col,int npc,int npc_date[8][2]){
 }
 
 
-int npcplay(int date,int saves[2]){
-
-    if(date==0){
-        return 50;
-    }
-    else if(date==10){
-        return 0;
-    }
-    else if(date==20){
-        return 1;
-    }
-    else if(date==30){
-        return 2;
-    }
-    else if(date==40){
-        return 3;
-    }
-    else if(date==100){
-        return 4;
-    }
-    
-}
-
-
 void showban(int ban1[MASU][MASU],int ban2[MASU][MASU]){
     
     for(int mem=0;mem<MASU+1;mem++){
@@ -147,8 +123,8 @@ int main(void){
 
     static int banmen_you[MASU][MASU];
     static int banmen_npc[MASU][MASU];
-    static int npc_date[8][2];
-    int input_x,input_y,input_npc[2],winlose=100,playcount=0,a,npcsaves[2]={0,0},b=1;
+    static int npc_date[8][2],flag[2],npcsaves[2],input_npc[2][2];
+    int input_x,input_y,temp_x,temp_y,winlose=100,playcount=0,flag_x,flag_y,b=1;
 
     while(1){
         if(playcount%2==0){
@@ -165,67 +141,206 @@ int main(void){
         }
 
             else{
-                a=npcplay(winlose,npcsaves);
                 for(int c=0;c<8;c++){
+                    
                     for(int d=0;d<2;d++){
-                        printf("%d\n",npc_date[c][d]);
+                        printf("%d",npc_date[c][d]);
                     }
+                    printf("\n");
                 }
-                switch(a){
-                    case 0://col
+                
+                switch(winlose){
+                    case 10://col
+                        for(int arraynum=0;arraynum<2;arraynum++){
 
-                        input_x=npc_date[0][0];
-                        input_y=npc_date[0][1];
+                            for(int i=0;i<MASU;i++){
+                            temp_x=npc_date[arraynum][0];//
+                            temp_y=npc_date[arraynum][1];
+                                if(temp_x<0 || temp_x>=MASU || temp_y<0 || temp_y>=MASU){//
+                                    flag[arraynum]=2;
+                                    break;
+                                }
 
-                        if(banmen_you[input_x][input_y]==0 && banmen_npc[input_x][input_y]==0 && input_x<MASU && input_x>-1 && input_y<MASU && input_y>-1)
-                            break;
-                        
-                        else{
-                        input_x=npc_date[1][0];
-                        input_y=npc_date[1][1];
-                        break;
+                                if(arraynum==0)
+                                    flag_y=temp_y+i;
+                                else
+                                    flag_y=temp_y-i;
+                                    
+                                if(banmen_you[temp_x][flag_y]==0){
+                                    temp_y=flag_y;
+                                    if(banmen_you[temp_x][temp_y]==0 && banmen_npc[temp_x][temp_y]==0){
+                                        flag[arraynum]=3;
+                                        if(arraynum==0)
+                                            flag_y=temp_y+1;
+                                        else
+                                            flag_y=temp_y-1;
+
+                                        if(banmen_you[temp_x][flag_y]==1){
+                                            flag[arraynum]=1;
+                                            break;//
+                                        }
+                                        break;//
+                                    
+                                    }
+                                    else
+                                        flag[arraynum]=2;
+                                    break;
+                                }
+                            }
+
+                            input_npc[arraynum][0]=temp_x;
+                            input_npc[arraynum][1]=temp_y;
                         }
-
-                    case 1://row
-
-                        input_x=npc_date[2][0];
-                        input_y=npc_date[2][1];
-                        if(banmen_you[input_x][input_y]==0 && banmen_npc[input_x][input_y]==0 && input_x<MASU && input_x>-1 && input_y<MASU && input_y>-1)
-                            break;
-                        
-                        else{
-                        input_x=npc_date[3][0];
-                        input_y=npc_date[3][1];
                         break;
+                
+
+                    case 20://row
+                        for(int arraynum=0;arraynum<2;arraynum++){
+
+                            for(int i=0;i<MASU;i++){
+                                temp_x=npc_date[arraynum+2][0];
+                                temp_y=npc_date[arraynum+2][1];
+
+                                if(temp_x<0 || temp_x>=MASU || temp_y<0 || temp_y>=MASU){
+                                    flag[arraynum]=2;
+                                    break;
+                                }
+
+                                if(arraynum==0)
+                                    flag_x=temp_x+i;
+                                else
+                                    flag_x=temp_x-i;
+
+                                if(banmen_you[flag_x][temp_y]==0){
+                                    temp_x=flag_x;
+                                    if(banmen_you[temp_x][temp_y]==0 && banmen_npc[temp_x][temp_y]==0){
+                                        flag[arraynum]=3;
+                                        if(arraynum==0)
+                                            flag_x=temp_x+1;
+                                        else
+                                            flag_x=temp_x-1;
+
+                                        if(banmen_you[flag_x][temp_y]==1){
+                                            flag[arraynum]=1;
+                                            break;
+                                        }
+                                        break;
+                                    }
+                                    else
+                                        flag[arraynum]=2;
+                                    break;
+                                }
+                            }
+
+                                printf("%d,%d,flag:%d,%d\n",temp_x,temp_y,flag[0],flag[1]);
+                            input_npc[arraynum+2][0]=temp_x;
+                            input_npc[arraynum+2][1]=temp_y;
                         }
-
-                    case 2://diagr
-
-                        input_x=npc_date[4][0];
-                        input_y=npc_date[4][1];
-                        if(banmen_you[input_x][input_y]==0 && banmen_npc[input_x][input_y]==0 && input_x<MASU && input_x>-1 && input_y<MASU && input_y>-1)
-                            break;
-
-                        else{
-                        input_x=npc_date[5][0];
-                        input_y=npc_date[5][1];
                         break;
+                
+                    case 30://diagr
+                        for(int arraynum=0;arraynum<2;arraynum++){
+
+                            for(int i=0;i<MASU;i++){
+                            temp_x=npc_date[arraynum+4][0];
+                            temp_y=npc_date[arraynum+4][1];
+
+                                if(temp_x<0 || temp_x>=MASU || temp_y<0 || temp_y>=MASU){
+                                    flag[arraynum]=2;
+                                    break;
+                                }
+
+                                if(arraynum==0){
+                                    flag_x=temp_x+i;
+                                    flag_y=temp_y+i;
+                                }
+                                else{
+                                    flag_x=temp_x-i;
+                                    flag_y=temp_y-i;
+                                }
+                                if(banmen_you[flag_x][flag_y]==0){
+                                    temp_x=flag_x;
+                                    temp_y=flag_y;
+                                    if(banmen_you[temp_x][temp_y]==0 && banmen_npc[temp_x][temp_y]==0){
+                                    flag[arraynum]=3;
+                                        if(arraynum==0){
+                                            flag_x=temp_x+1;
+                                            flag_y=temp_y+1;
+                                        }
+                                        else{
+                                            flag_x=temp_x-1;
+                                            flag_y=temp_y-1;
+                                        }
+                                        if(banmen_you[flag_x][flag_y]==1){
+                                            flag[arraynum]=1;
+                                            break;
+                                        }
+                                        break;
+                                    }
+                                    else
+                                        flag[arraynum]=2;
+                                    break;
+                                }
+                            }
+
+                            input_npc[arraynum+4][0]=temp_x;
+                            input_npc[arraynum+4][1]=temp_y;
                         }
-
-                    case 3://diagl
-
-                        input_x=npc_date[6][0];
-                        input_y=npc_date[6][1];
-                        if(banmen_you[input_x][input_y]==0 && banmen_npc[input_x][input_y]==0 && input_x<MASU && input_x>-1 && input_y<MASU && input_y>-1)
-                            break;
-
-                        else{
-                        input_x=npc_date[7][0];
-                        input_y=npc_date[7][1];
                         break;
-                        }
+                
+                    case 40://diagl
+                        for(int arraynum=0;arraynum<2;arraynum++){
 
-                    case 4:
+                            for(int i=0;i<MASU;i++){
+                            temp_x=npc_date[arraynum+6][0];
+                            temp_y=npc_date[arraynum+6][1];
+
+                                if(temp_x<0 || temp_x>=MASU || temp_y<0 || temp_y>=MASU){
+                                    flag[arraynum]=2;
+                                    break;
+                                }
+
+                                if(arraynum==0){
+                                    flag_x=temp_x-i;
+                                    flag_y=temp_y+i;
+                                }
+                                else{
+                                    flag_x=temp_x-i;
+                                    flag_y=temp_y+i;
+                                }
+                                if(banmen_you[flag_x][flag_y]==0){
+                                    temp_x=flag_x;
+                                    temp_y=flag_y;
+                                    if(banmen_you[temp_x][temp_y]==0 && banmen_npc[temp_x][temp_y]==0){
+                                    flag[arraynum]=3;
+                                        if(arraynum==0){
+                                            flag_x=temp_x-1;
+                                            flag_y=temp_y+1;
+                                        }
+                                        else{
+                                            flag_x=temp_x+1;
+                                            flag_y=temp_y-1;
+                                        }
+                                        if(banmen_you[flag_x][flag_y]==1){
+                                            flag[arraynum]=1;
+                                            break;
+                                        }
+                                    break;
+                                    }
+                                    else
+                                        flag[arraynum]=2;
+                                    break;
+                                }
+                            }
+
+                            input_npc[arraynum+6][0]=temp_x;
+                            input_npc[arraynum+6][1]=temp_y;
+                        }
+                        break;
+                
+
+
+                    case 100:
                         input_x=input_x+1;
                         input_y=input_y+1;
 
@@ -239,7 +354,7 @@ int main(void){
                     default:
                         input_x=npcsaves[0]+1;
                         input_y=npcsaves[1];
-                        a=6;
+                        int a=6;
                         for(int i=1;i==1 || !(banmen_you[input_x][input_y]==0 && banmen_npc[input_x][input_y]==0 && input_x<MASU && input_x>-1 && input_y<MASU && input_y>-1); i++){
                             if(i>a){
                                 a+=7;
@@ -278,12 +393,93 @@ int main(void){
                             }
                         }
                 }
-                npcsaves[0]=input_x;
-                npcsaves[1]=input_y;
+                    int sel=winlose;
+                    if(sel==10)
+                        sel=0;
+                    else if(sel==20)
+                        sel=2;
+                    else if(sel==30)
+                        sel=4;
+                    else if(sel==40)
+                        sel=6;
+
+                    if(flag[0]==1 && flag[1]==1){
+                        input_x=input_npc[1+sel][0];
+                        input_y=input_npc[1+sel][1];
+                    }
+                    else if(flag[0]==3 && flag[1]==3){
+                        input_x=input_npc[1+sel][0];
+                        input_y=input_npc[1+sel][1];
+                    }
+                    //ランダム
+                    else if(flag[0]==2 && flag[1]==2){
+                        
+                        input_x=npcsaves[0]+1;
+                        input_y=npcsaves[1];
+                        int a=6;
+                        for(int i=1;i==1 || !(banmen_you[input_x][input_y]==0 && banmen_npc[input_x][input_y]==0 && input_x<MASU && input_x>-1 && input_y<MASU && input_y>-1); i++){
+                            if(i>a){
+                                a+=7;
+                                b=a/2;
+                                continue;
+                            }
+                            switch(i%7){
+                                case 0:
+                                    input_x=npcsaves[0];
+                                    input_y=npcsaves[1]+b;
+                                    break;
+                                case 1:
+                                    input_x=npcsaves[0]+b;
+                                    input_y=npcsaves[1]+b;
+                                    break;
+                                case 2:
+                                    input_x=npcsaves[0]-b;
+                                    input_y=npcsaves[1];
+                                    break;
+                                case 3:
+                                    input_x=npcsaves[0];
+                                    input_y=npcsaves[1]-b;
+                                    break;
+                                case 4:
+                                    input_x=npcsaves[0]-b;
+                                    input_y=npcsaves[1]-b;
+                                    break;
+                                case 5:
+                                    input_x=npcsaves[0]+b;
+                                    input_y=npcsaves[1]-b;
+                                    break;
+                                case 6:
+                                    input_x=npcsaves[0]-b;
+                                    input_y=npcsaves[1]+b;
+                                    break;
+                            }
+                        }
+                    }
+//
+                    else if(flag[0]==1 && (flag[1]==2 || flag[1]==3)){
+                        input_x=input_npc[0+sel][0];
+                        input_y=input_npc[0+sel][1];
+                    }
+                    else if(flag[0]==3 && flag[1]==2){
+                        input_x=input_npc[0+sel][0];
+                        input_y=input_npc[0+sel][1];
+                    }
+//
+                    else if(flag[1]==1 && (flag[0]==2 || flag[0]==3)){
+                        input_x=input_npc[1+sel][0];
+                        input_y=input_npc[1+sel][1];
+                    }
+                    else if(flag[1]==3 && flag[0]==2){
+                        input_x=input_npc[1+sel][0];
+                        input_y=input_npc[1+sel][1];
+                    }
+
+//npc ここまで
             }
 
 //10 row 20 col 30 R 40 L
-
+        printf("final:%d,%d\n%d\n",input_x,input_y,winlose);
+        
         if(playcount%2==0){
             banmen_you[input_x][input_y]=1;
             winlose=hantei(banmen_you,input_x,input_y,playcount%2,npc_date);
@@ -295,12 +491,10 @@ int main(void){
         }
 
         showban(banmen_you,banmen_npc);
-
         if(winlose==1){
             printf("Player%d was WIN!",playcount%2+1);
             break;
         }
-        printf("%d\n",winlose);
         playcount++;
 //引き分け
         if(playcount>=MASU*MASU){
@@ -308,5 +502,6 @@ int main(void){
             return 0;
         }
     }
+
     return 0;
 }
